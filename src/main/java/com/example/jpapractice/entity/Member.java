@@ -48,6 +48,14 @@ public class Member {
         this.age = age;
     }
 
+    public void updateProfile(String name, int age) {
+        validateName(name);
+        validateAge(age);
+
+        this.name = name;
+        this.age = age;
+    }
+
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("이름은 비어 있을 수 없습니다.");

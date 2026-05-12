@@ -1,5 +1,6 @@
 package com.example.jpapractice.service;
 
+import com.example.jpapractice.dto.MemberUpdateRequest;
 import com.example.jpapractice.repository.MemberRepository;
 import com.example.jpapractice.dto.MemberCreateRequest;
 import com.example.jpapractice.entity.Member;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional()
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -30,9 +32,26 @@ public class MemberService {
     }
 
     public MemberResponse findMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
+        Member member = getMember(memberId);
 
         return MemberResponse.from(member);
+    }
+
+    @Transactional
+    public void updateMember(Long memberId, MemberUpdateRequest request) {
+        Member member = getMember(memberId);
+
+        member.updateProfile(request.name(), request.age());
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.delete(getMember(memberId));
+    }
+
+
+    private Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 없습니다."));
     }
 }

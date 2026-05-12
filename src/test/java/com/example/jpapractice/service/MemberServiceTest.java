@@ -1,57 +1,103 @@
 package com.example.jpapractice.service;
 
+import com.example.jpapractice.dto.MemberCreateRequest;
+import com.example.jpapractice.dto.MemberUpdateRequest;
 import com.example.jpapractice.entity.Member;
 import com.example.jpapractice.repository.MemberRepository;
+import com.example.jpapractice.response.MemberResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
-
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest
+@SpringBootTest
 class MemberServiceTest {
+
+    @Autowired
+    private MemberService memberService;
 
     @Autowired
     private MemberRepository memberRepository;
 
     @Test
-    @DisplayName("회원을 저장하고 ID로 조회할 수 있다")
-    void saveAndFindById() {
-        Member member = new Member("kim", "kim@test.com", 30);
-        Member savedMember = memberRepository.save(member);
+    @DisplayName("회원 가입 성공")
+    void joinSuccess() {
 
-        Optional<Member> result = memberRepository.findById(savedMember.getId());
+        MemberCreateRequest request = new MemberCreateRequest("tester", "test@test.com", 30);
 
-        assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("kim");
-        assertThat(result.get().getEmail()).isEqualTo("kim@test.com");
-        assertThat(result.get().getAge()).isEqualTo(30);
+        Long memberId = memberService.join(request);
+
+        MemberResponse member = memberService.findMember(memberId);
+
+        assertTrue(member != null);
+        assertEquals(member.name(), request.name());
+        assertEquals(member.email(), request.email());
+        assertEquals(member.age(), request.age());
+
     }
 
     @Test
-    @DisplayName("이메일로 회원을 조회할 수 있다")
-    void findByEmail() {
-        Member member = new Member("kim", "kim@test.com", 30);
-        memberRepository.save(member);
+    @DisplayName("이미 존재하는 이메일은 회원 가입 불가")
+    void existsEmail() {
 
-        Optional<Member> result = memberRepository.findByEmail("kim@test.com");
+        MemberCreateRequest request1 = new MemberCreateRequest("tester", "test@test.com", 30);
 
-        assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("kim");
+        MemberCreateRequest request2 = new MemberCreateRequest("testrr", "test@test.com", 31);
+
+        memberService.join(request1);
+
+        assertThatThrownBy(() -> memberService.join(request2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 사용중인 이메일입니다.");
     }
 
     @Test
-    @DisplayName("이메일 존재 여부를 확인할 수 있다")
-    void existsByEmail() {
-        Member member = new Member("kim", "kim@test.com", 30);
-        memberRepository.save(member);
+    @DisplayName("회원 단건 조회 성공")
+    void findMember() {
 
-        boolean exists = memberRepository.existsByEmail("kim@test.com");
+        MemberCreateRequest request = new MemberCreateRequest("tester", "test@test.com", 30);
 
-        assertThat(exists).isTrue();
+        Long memberId = memberService.join(request);
+
+        MemberResponse member = memberService.findMember(memberId);
+
+        assertTrue(member != null);
     }
+
+    @Test
+    @DisplayName("회원 정보를 수정할 수 있다")
+    void updateMember() {
+        Long memberId = memberService.join(
+                new MemberCreateRequest("kim", "kim@test.com", 30)
+        );
+
+        memberService.updateMember(
+                memberId,
+                new MemberUpdateRequest("lee", 31)
+        );
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow();
+
+        assertThat(member.getName()).isEqualTo("lee");
+        assertThat(member.getAge()).isEqualTo(31);
+    }
+
+    @Test
+    @DisplayName("회원을 삭제할 수 있다")
+    void deleteMember() {
+        Long memberId = memberService.join(
+                new MemberCreateRequest("kim", "kim@test.com", 30)
+        );
+
+        memberService.deleteMember(memberId);
+
+        assertThat(memberRepository.findById(memberId)).isEmpty();
+    }
+
 }
