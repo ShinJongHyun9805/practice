@@ -8,11 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/member")
+@RequestMapping(value = "/api/v1/members")
 public class MemberController {
 
     private final MemberService memberService;

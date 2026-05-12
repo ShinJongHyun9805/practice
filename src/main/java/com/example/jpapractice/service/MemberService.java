@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional()
 public class MemberService {
 
     private final MemberRepository memberRepository;
