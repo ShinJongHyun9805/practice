@@ -1,5 +1,6 @@
-package com.example.jpapractice;
+package com.example.jpapractice.repository;
 
+import com.example.jpapractice.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
