@@ -5,13 +5,13 @@ import com.example.jpapractice.repository.MemberRepository;
 import com.example.jpapractice.dto.MemberCreateRequest;
 import com.example.jpapractice.entity.Member;
 import com.example.jpapractice.response.MemberResponse;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Transactional()
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
