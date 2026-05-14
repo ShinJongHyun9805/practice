@@ -2,7 +2,6 @@ package com.example.jpapractice.entity;
 
 import com.example.jpapractice.enums.OrderStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +28,7 @@ public class Order {
     private Member member;
 
     public Order(String orderNumber, Member member) {
-        ValidateOrderNumber(orderNumber);
+        validateOrderNumber(orderNumber);
 
         if (member == null) {
             throw new IllegalArgumentException("회원 정보는 필수입니다.");
@@ -49,7 +48,7 @@ public class Order {
         this.orderStatus = OrderStatus.CANCELED;
     }
 
-    private void ValidateOrderNumber(String orderNumber) {
+    private void validateOrderNumber(String orderNumber) {
         if (orderNumber == null || orderNumber.isBlank()) {
             throw new IllegalArgumentException("주문번호는 필수입니다.");
         }

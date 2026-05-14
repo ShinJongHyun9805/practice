@@ -3,6 +3,7 @@ package com.example.jpapractice.controller;
 import com.example.jpapractice.dto.OrderCreateRequest;
 import com.example.jpapractice.response.OrderResponse;
 import com.example.jpapractice.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public Long createOrder(OrderCreateRequest request) {
+    public Long createOrder(@RequestBody @Valid OrderCreateRequest request) {
         return orderService.createOrder(request);
     }
 

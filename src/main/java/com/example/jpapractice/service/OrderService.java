@@ -20,7 +20,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
 
-    //createOrder(OrderCreateRequest request)
+    @Transactional
     public Long createOrder(OrderCreateRequest request) {
 
         Member member = memberRepository.findById(request.memberId())
