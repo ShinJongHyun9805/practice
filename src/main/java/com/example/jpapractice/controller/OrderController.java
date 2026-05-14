@@ -1,7 +1,7 @@
 package com.example.jpapractice.controller;
 
 import com.example.jpapractice.dto.OrderCreateRequest;
-import com.example.jpapractice.response.OrderResponse;
+import com.example.jpapractice.response.OrderDetailResponse;
 import com.example.jpapractice.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +22,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public OrderResponse getOrder(@PathVariable("orderId") Long orderId) {
-        return orderService.findOrder(orderId);
-    }
-
-    @GetMapping
-    public List<OrderResponse> getOrders(@RequestParam Long memberId) {
-        return orderService.findOrderByMember(memberId);
+    public OrderDetailResponse getOrder(@PathVariable("orderId") Long orderId) {
+        return orderService.findOrderDetail(orderId);
     }
 
     @PatchMapping("/{orderId}/cancel")
